@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Repository
@@ -21,7 +20,7 @@ public class ProductRepositoryImpl implements ProductRepository{
     private final AtomicLong productId = new AtomicLong(1);
 
     @Override
-    public void loadDataBase() {
+    public void loadDataBase() throws IOException {
         if(!dataBaseLoaded){
             String csvFile = "src/main/resources/dbProductos.csv";
             BufferedReader br = null;
@@ -35,19 +34,19 @@ public class ProductRepositoryImpl implements ProductRepository{
                     boolean freeShipping = data[5].toUpperCase().equals("SI")?true:false;
                     dataBase.add(new ArticleDTO(productId.getAndIncrement(), data[0], data[1], data[2],
                                     Double.parseDouble(data[3].replace("$", "").replace(".", "")), Integer.parseInt(data[4]), freeShipping,
-                            data[6].length()));
+                            data[6]));
                     }
                 dataBaseLoaded = true;
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                throw new FileNotFoundException("File dbProductos.csv not found");
             } catch (IOException e) {
-                e.printStackTrace();
+                throw new IOException("Error reading the following file: dbProductos.csv");
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
+                        throw new IOException("Error closing the following file: dbProductos.csv");
                     }
                 }
             }
@@ -55,7 +54,7 @@ public class ProductRepositoryImpl implements ProductRepository{
     }
 
     @Override
-    public List<ArticleDTO> getAllProducts() {
+    public List<ArticleDTO> getAllProducts() throws IOException {
         loadDataBase();
         return dataBase;
     }
@@ -93,8 +92,17 @@ public class ProductRepositoryImpl implements ProductRepository{
 
     @Override
     public List<ArticleDTO> getProductsByPrestige(List<ArticleDTO> list, int prestige) {
-        return list.stream().filter(articleDTO -> articleDTO.getPrestige() == prestige).
+        return list.stream().filter(articleDTO -> articleDTO.getPrestige().length() == prestige).
                 collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateDataBase(List<ArticleDTO> listArticles) {
+        for(ArticleDTO a: listArticles){
+            if(dataBase.contains(a)){
+                dataBase.get(dataBase.indexOf(a)).decrementQuantity(a.getQuantity());
+            }
+        }
     }
 
 }

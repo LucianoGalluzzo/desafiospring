@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -19,8 +20,18 @@ public class ArticleDTO {
     private double price;
     private int quantity;
     private boolean freeShipping;
-    private int prestige;
+    private String prestige;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ArticleDTO that = (ArticleDTO) o;
+        return Objects.equals(productId, that.productId);
+    }
 
+    public void decrementQuantity(int q){
+        this.quantity-=q;
+    }
 
 }
