@@ -15,7 +15,7 @@ public interface MarketService {
     List<ArticleDTO> getAllProducts() throws IOException;
     List<ArticleDTO> getProductsByOneOrTwoParams(Map<String, String> params) throws IOException;
     List<ArticleDTO> sortList(List<ArticleDTO> list, int order) throws WrongOrderException;
-    void updateDataBase(List<ArticleDTO> listArticles);
+    void updateDataBase(List<ArticleDTO> listArticles) throws IOException;
     ResponseDTO purchaseRequest(PayloadDTO payload) throws IOException, InsufficientStockException, NotFoundArticleException;
     void validateParams(Map<String, String> params) throws WrongParameterException;
 }

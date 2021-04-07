@@ -1,6 +1,7 @@
 package com.example.market.repositories;
 
 import com.example.market.dtos.ArticleDTO;
+import com.example.market.dtos.ClientDTO;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,5 +17,7 @@ public interface ProductRepository {
     List<ArticleDTO> getProductsByPrice(List<ArticleDTO> list, double price);
     List<ArticleDTO> getProductsByFreeShipping(List<ArticleDTO> list, boolean freeShipping);
     List<ArticleDTO> getProductsByPrestige(List<ArticleDTO> list, int prestige);
-    void updateDataBase(List<ArticleDTO> listArticles);
+    void updateDataBase(List<ArticleDTO> listArticles) throws IOException;
+    void saveDB() throws IOException;
+
 }

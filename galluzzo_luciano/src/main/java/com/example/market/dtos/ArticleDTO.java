@@ -27,7 +27,7 @@ public class ArticleDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ArticleDTO that = (ArticleDTO) o;
-        return Objects.equals(productId, that.productId);
+        return Objects.equals(productId, that.productId) && Objects.equals(name, that.name) && Objects.equals(brand, that.brand);
     }
 
     public void decrementQuantity(int q){

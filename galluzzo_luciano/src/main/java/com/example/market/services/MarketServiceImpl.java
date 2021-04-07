@@ -98,17 +98,17 @@ public class MarketServiceImpl implements MarketService{
             break;
             case 1: list.sort(Comparator.comparing(ArticleDTO::getName).reversed());
             break;
-            case 2: list.sort(Comparator.comparing(ArticleDTO::getPrice));
+            case 2: list.sort(Comparator.comparing(ArticleDTO::getPrice).reversed());
             break;
-            case 3: list.sort(Comparator.comparing(ArticleDTO::getPrice).reversed());
+            case 3: list.sort(Comparator.comparing(ArticleDTO::getPrice));
             break;
-            default: throw new WrongOrderException("El orden " + String.valueOf(order) + " no es un tipo válido");
+            default: throw new WrongOrderException("Order param " + String.valueOf(order) + " is not valid");
         }
         return list;
     }
 
     @Override
-    public void updateDataBase(List<ArticleDTO> listArticles) {
+    public void updateDataBase(List<ArticleDTO> listArticles) throws IOException {
         productRepository.updateDataBase(listArticles);
     }
 

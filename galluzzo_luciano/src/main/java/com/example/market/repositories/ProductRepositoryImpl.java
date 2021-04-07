@@ -1,13 +1,12 @@
 package com.example.market.repositories;
 
 import com.example.market.dtos.ArticleDTO;
+import com.example.market.dtos.ClientDTO;
 import org.springframework.stereotype.Repository;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
@@ -16,13 +15,13 @@ import java.util.stream.Collectors;
 public class ProductRepositoryImpl implements ProductRepository{
 
     private boolean dataBaseLoaded = false;
-    private final List<ArticleDTO> dataBase = new ArrayList();
+    private final List<ArticleDTO> dataBase = new ArrayList<>();
     private final AtomicLong productId = new AtomicLong(1);
+    private final String csvFile = "src/main/resources/dbProductos.csv";
 
     @Override
     public void loadDataBase() throws IOException {
         if(!dataBaseLoaded){
-            String csvFile = "src/main/resources/dbProductos.csv";
             BufferedReader br = null;
             String line = "";
             String cvsSplitBy = ",";
@@ -38,15 +37,15 @@ public class ProductRepositoryImpl implements ProductRepository{
                     }
                 dataBaseLoaded = true;
             } catch (FileNotFoundException e) {
-                throw new FileNotFoundException("File dbProductos.csv not found");
+                throw new FileNotFoundException("File " + csvFile + " not found");
             } catch (IOException e) {
-                throw new IOException("Error reading the following file: dbProductos.csv");
+                throw new IOException("Error reading the following file: " + csvFile);
             } finally {
                 if (br != null) {
                     try {
                         br.close();
                     } catch (IOException e) {
-                        throw new IOException("Error closing the following file: dbProductos.csv");
+                        throw new IOException("Error closing the following file: " + csvFile);
                     }
                 }
             }
@@ -97,12 +96,34 @@ public class ProductRepositoryImpl implements ProductRepository{
     }
 
     @Override
-    public void updateDataBase(List<ArticleDTO> listArticles) {
+    public void updateDataBase(List<ArticleDTO> listArticles) throws IOException {
         for(ArticleDTO a: listArticles){
             if(dataBase.contains(a)){
                 dataBase.get(dataBase.indexOf(a)).decrementQuantity(a.getQuantity());
             }
         }
+        saveDB();
+    }
+
+    public void saveDB() throws IOException {
+        dataBase.sort(Comparator.comparing(ArticleDTO::getProductId));
+        FileWriter writer = new FileWriter(csvFile);
+        String separator = ",";
+        String collect = "Producto,Categoría,Marca,Precio,Cantidad,Envío Gratis,Prestigio\n";
+        String freeShipping = "NO";
+        for(ArticleDTO articleDTO: dataBase) {
+            if(articleDTO.isFreeShipping())
+                freeShipping = "SI";
+            else
+                freeShipping = "NO";
+
+            collect += articleDTO.getName() + separator + articleDTO.getCategory() + separator +
+                    articleDTO.getBrand() + separator + "$" + (int)articleDTO.getPrice() + separator +
+                    articleDTO.getQuantity() + separator + freeShipping + separator + articleDTO.getPrestige() +
+                    "\n";
+        }
+        writer.write(collect);
+        writer.close();
     }
 
 }

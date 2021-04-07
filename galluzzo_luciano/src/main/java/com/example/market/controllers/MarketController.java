@@ -1,10 +1,7 @@
 package com.example.market.controllers;
 
 import com.example.market.config.*;
-import com.example.market.dtos.ArticleDTO;
-import com.example.market.dtos.ErrorDTO;
-import com.example.market.dtos.PayloadDTO;
-import com.example.market.dtos.ResponseDTO;
+import com.example.market.dtos.*;
 import com.example.market.services.MarketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
