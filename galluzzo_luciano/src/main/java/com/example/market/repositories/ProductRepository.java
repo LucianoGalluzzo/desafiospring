@@ -1,5 +1,6 @@
 package com.example.market.repositories;
 
+import com.example.market.config.EmptyDataBaseException;
 import com.example.market.dtos.ArticleDTO;
 import com.example.market.dtos.ClientDTO;
 
@@ -10,7 +11,7 @@ import java.util.List;
 public interface ProductRepository {
 
     void loadDataBase() throws IOException;
-    List<ArticleDTO> getAllProducts() throws IOException;
+    List<ArticleDTO> getAllProducts() throws IOException, EmptyDataBaseException;
     List<ArticleDTO> getProductsByCategory(List<ArticleDTO> list, String categoryName);
     List<ArticleDTO> getProductsByName(List<ArticleDTO> list, String name);
     List<ArticleDTO> getProductsByBrand(List<ArticleDTO> list, String brand);

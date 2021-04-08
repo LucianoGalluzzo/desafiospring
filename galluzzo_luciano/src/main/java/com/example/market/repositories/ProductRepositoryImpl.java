@@ -1,5 +1,6 @@
 package com.example.market.repositories;
 
+import com.example.market.config.EmptyDataBaseException;
 import com.example.market.dtos.ArticleDTO;
 import com.example.market.dtos.ClientDTO;
 import org.springframework.stereotype.Repository;
@@ -53,8 +54,10 @@ public class ProductRepositoryImpl implements ProductRepository{
     }
 
     @Override
-    public List<ArticleDTO> getAllProducts() throws IOException {
+    public List<ArticleDTO> getAllProducts() throws IOException, EmptyDataBaseException {
         loadDataBase();
+        if(dataBase.isEmpty())
+            throw new EmptyDataBaseException(csvFile);
         return dataBase;
     }
 

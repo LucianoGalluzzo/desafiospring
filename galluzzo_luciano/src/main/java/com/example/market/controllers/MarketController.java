@@ -27,7 +27,7 @@ public class MarketController {
     correspondiente
      */
     @GetMapping("/articles")
-    public ResponseEntity<List<ArticleDTO>> getProducts(@RequestParam Map<String, String> params) throws IllegalAmountArgumentException, WrongParameterValueException, IOException, WrongParameterException {
+    public ResponseEntity<List<ArticleDTO>> getProducts(@RequestParam Map<String, String> params) throws IllegalAmountArgumentException, WrongParameterValueException, IOException, WrongParameterException, EmptyDataBaseException {
         return new ResponseEntity<>(marketService.getProducts(params), HttpStatus.OK);
     }
 
@@ -40,7 +40,7 @@ public class MarketController {
     Estas solicitudes son agregadas al carrito de compras
     */
     @PostMapping("/purchase-request")
-    public ResponseEntity<ResponseDTO> purchaseRequest(@RequestBody PayloadDTO payload) throws InsufficientStockException, IOException, NotFoundArticleException {
+    public ResponseEntity<ResponseDTO> purchaseRequest(@RequestBody PayloadDTO payload) throws InsufficientStockException, IOException, NotFoundArticleException, EmptyDataBaseException {
         return new ResponseEntity<>(marketService.purchaseRequest(payload), HttpStatus.OK);
     }
 
@@ -99,6 +99,12 @@ public class MarketController {
     @ExceptionHandler(value={EmptyCartException.class})
     public ResponseEntity<ErrorDTO> emptyCartException(Exception e){
         ErrorDTO errorDTO = new ErrorDTO("Empty Cart", e.getMessage());
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value={EmptyDataBaseException.class})
+    public ResponseEntity<ErrorDTO> emptyDataBaseException(Exception e){
+        ErrorDTO errorDTO = new ErrorDTO("Empty DataBase", e.getMessage());
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 }

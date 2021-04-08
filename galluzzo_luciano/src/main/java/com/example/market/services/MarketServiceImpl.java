@@ -22,15 +22,20 @@ public class MarketServiceImpl implements MarketService{
             "category", "productId", "name", "brand", "price", "quantity", "freeShipping", "prestige"));
 
     @Override
-    public List<ArticleDTO> getProducts(Map<String, String> params) throws IllegalAmountArgumentException, WrongParameterValueException, IOException, WrongParameterException {
+    public List<ArticleDTO> getProducts(Map<String, String> params) throws IllegalAmountArgumentException, WrongParameterValueException, IOException, WrongParameterException, EmptyDataBaseException {
         int order=9999, size;
         boolean needOrder=false;
         List<ArticleDTO> list = new ArrayList<>();
 
         if(params.containsKey("order")){
-            order = Integer.parseInt(params.get("order"));
-            params.remove("order");
-            needOrder = true;
+            try{
+                order = Integer.parseInt(params.get("order"));
+                params.remove("order");
+                needOrder = true;
+
+            }catch (Exception e){
+                throw new WrongParameterValueException("order", params.get("order"));
+            }
         }
 
         size = params.size();
@@ -53,13 +58,13 @@ public class MarketServiceImpl implements MarketService{
     }
 
     @Override
-    public List<ArticleDTO> getAllProducts() throws IOException {
+    public List<ArticleDTO> getAllProducts() throws IOException, EmptyDataBaseException {
         return productRepository.getAllProducts();
     }
 
 
     @Override
-    public List<ArticleDTO> getProductsByOneOrTwoParams(Map<String, String> params) throws IOException, WrongParameterValueException {
+    public List<ArticleDTO> getProductsByOneOrTwoParams(Map<String, String> params) throws IOException, WrongParameterValueException, EmptyDataBaseException {
 
         List<ArticleDTO> list = productRepository.getAllProducts();
 
@@ -129,7 +134,7 @@ public class MarketServiceImpl implements MarketService{
     }
 
     @Override
-    public ResponseDTO purchaseRequest(PayloadDTO payload) throws IOException, InsufficientStockException, NotFoundArticleException {
+    public ResponseDTO purchaseRequest(PayloadDTO payload) throws IOException, InsufficientStockException, NotFoundArticleException, EmptyDataBaseException {
         List<ArticleDTO> list = getAllProducts();
         List<ArticleResponseDTO> listArticleResponse = new ArrayList<>();
         ArticleDTO aux = null;

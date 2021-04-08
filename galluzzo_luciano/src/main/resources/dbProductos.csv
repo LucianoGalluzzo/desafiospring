@@ -1,7 +1,7 @@
 Producto,Categoría,Marca,Precio,Cantidad,Envío Gratis,Prestigio
-Desmalezadora,Herramientas,Makita,$9600,0,SI,****
-Taladro,Herramientas,Black & Decker,$12500,4,SI,****
-Soldadora,Herramientas,Black & Decker,$7215,4,SI,***
+Desmalezadora,Herramientas,Makita,$9600,5,SI,****
+Taladro,Herramientas,Black & Decker,$12500,2,SI,****
+Soldadora,Herramientas,Black & Decker,$7215,0,SI,***
 Zapatillas Deportivas,Deportes,Adidas,$13650,6,SI,*****
 Zapatillas Deportivas,Deportes,Nike,$14000,4,SI,*****
 Camiseta,Deportes,Topper,$2300,2,NO,***
