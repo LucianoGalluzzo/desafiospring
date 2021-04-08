@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -23,16 +21,34 @@ public class MarketController {
     @Autowired
     private MarketService marketService;
 
+    /*
+    El siguiente endpoint devuelve la lista de todos los productos que se encuentran en la base de datos (archivo)
+    Si se pasan más de 2 parámetros, algún parametro invalido o un orden que no corresponde devuelve la excepcion
+    correspondiente
+     */
     @GetMapping("/articles")
-    public ResponseEntity<List<ArticleDTO>> getProducts(@RequestParam Map<String, String> params) throws IllegalAmountArgumentException, WrongOrderException, IOException, WrongParameterException {
+    public ResponseEntity<List<ArticleDTO>> getProducts(@RequestParam Map<String, String> params) throws IllegalAmountArgumentException, WrongParameterValueException, IOException, WrongParameterException {
         return new ResponseEntity<>(marketService.getProducts(params), HttpStatus.OK);
     }
 
+    /*
+    El siguiente endpoint recibe un objeto PayloadDTO que contiene una lista de articulos
+    Devuelve un objeto ResponseDTO que tiene un Ticket y un Status. Si la cantidad solicitada es mayor al
+    stock disponible devuelve una excepcion. Tambien arroja una excepcion cuando se solicita un producto que
+    no existe, verificando el productId, nombre y marca (teniendo en cuenta que más de un producto tiene el mismo
+    nombre pero se diferencia por la marca).
+    Estas solicitudes son agregadas al carrito de compras
+    */
     @PostMapping("/purchase-request")
     public ResponseEntity<ResponseDTO> purchaseRequest(@RequestBody PayloadDTO payload) throws InsufficientStockException, IOException, NotFoundArticleException {
         return new ResponseEntity<>(marketService.purchaseRequest(payload), HttpStatus.OK);
     }
 
+    /*
+    El siguiente endpoint devuelve el carrito de compras completo, que contiene una lista de tickets y un total
+    acumulado. Devuelve una excepcion en caso de que el carrito este vacío y no se encuentren solicitudes de compra
+    El carrito contiene las solicitudes de compra enviadas en el endpoint 'purchase-request'
+     */
     @GetMapping("/cart")
     public ResponseEntity<CartDTO> getCart() throws EmptyCartException {
         return new ResponseEntity<>(marketService.getCart(), HttpStatus.OK);
@@ -44,9 +60,9 @@ public class MarketController {
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value={WrongOrderException.class})
+    @ExceptionHandler(value={WrongParameterValueException.class})
     public ResponseEntity<ErrorDTO> wrongOrderException(Exception e){
-        ErrorDTO errorDTO = new ErrorDTO("Invalid order parameter", e.getMessage());
+        ErrorDTO errorDTO = new ErrorDTO("Invalid parameter value", e.getMessage());
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 

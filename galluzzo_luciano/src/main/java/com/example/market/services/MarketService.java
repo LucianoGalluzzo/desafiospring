@@ -9,10 +9,10 @@ import java.util.Map;
 
 public interface MarketService {
 
-    List<ArticleDTO> getProducts(Map<String, String> params) throws IllegalAmountArgumentException, WrongOrderException, IOException, WrongParameterException;
+    List<ArticleDTO> getProducts(Map<String, String> params) throws IllegalAmountArgumentException, WrongParameterValueException, IOException, WrongParameterException;
     List<ArticleDTO> getAllProducts() throws IOException;
-    List<ArticleDTO> getProductsByOneOrTwoParams(Map<String, String> params) throws IOException;
-    List<ArticleDTO> sortList(List<ArticleDTO> list, int order) throws WrongOrderException;
+    List<ArticleDTO> getProductsByOneOrTwoParams(Map<String, String> params) throws IOException, WrongParameterValueException;
+    List<ArticleDTO> sortList(List<ArticleDTO> list, int order) throws WrongParameterValueException;
     void updateDataBase(List<ArticleDTO> listArticles) throws IOException;
     ResponseDTO purchaseRequest(PayloadDTO payload) throws IOException, InsufficientStockException, NotFoundArticleException;
     void validateParams(Map<String, String> params) throws WrongParameterException;

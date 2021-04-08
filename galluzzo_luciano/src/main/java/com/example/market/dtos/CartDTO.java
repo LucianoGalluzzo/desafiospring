@@ -19,7 +19,7 @@ public class CartDTO {
         this.tickets.add(t);
     }
 
-    public boolean isEmpty(){
+    public boolean emptyCart(){
         return tickets.isEmpty();
     }
 }

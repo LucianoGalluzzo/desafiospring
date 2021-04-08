@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -23,7 +22,7 @@ public class MarketServiceImpl implements MarketService{
             "category", "productId", "name", "brand", "price", "quantity", "freeShipping", "prestige"));
 
     @Override
-    public List<ArticleDTO> getProducts(Map<String, String> params) throws IllegalAmountArgumentException, WrongOrderException, IOException, WrongParameterException {
+    public List<ArticleDTO> getProducts(Map<String, String> params) throws IllegalAmountArgumentException, WrongParameterValueException, IOException, WrongParameterException {
         int order=9999, size;
         boolean needOrder=false;
         List<ArticleDTO> list = new ArrayList<>();
@@ -60,7 +59,7 @@ public class MarketServiceImpl implements MarketService{
 
 
     @Override
-    public List<ArticleDTO> getProductsByOneOrTwoParams(Map<String, String> params) throws IOException {
+    public List<ArticleDTO> getProductsByOneOrTwoParams(Map<String, String> params) throws IOException, WrongParameterValueException {
 
         List<ArticleDTO> list = productRepository.getAllProducts();
 
@@ -74,25 +73,41 @@ public class MarketServiceImpl implements MarketService{
             list = productRepository.getProductsByBrand(list, params.get("brand"));
         }
         if(params.containsKey("price")){
-            double price = Double.parseDouble(params.get("price"));
-            list = productRepository.getProductsByPrice(list, price);
+            String priceParam = params.get("price");
+            try{
+                double price = Double.parseDouble(params.get("price"));
+                list = productRepository.getProductsByPrice(list, price);
+            }catch (NumberFormatException e){
+                throw new WrongParameterValueException("price", priceParam);
+            }
         }
         if(params.containsKey("freeShipping")){
-            boolean freeShipping = false;
-            if(params.get("freeShipping").equals("true")){
+            boolean freeShipping;
+            String freeShippingParam = params.get("freeShipping").toLowerCase();
+            if(freeShippingParam.equals("true") || freeShippingParam.equals("si") || freeShippingParam.equals("1"))
                 freeShipping = true;
+            else{
+                if(freeShippingParam.equals("false") || freeShippingParam.equals("no") || freeShippingParam.equals("0"))
+                    freeShipping = false;
+                else
+                    throw new WrongParameterValueException("freeShipping", freeShippingParam);
             }
             list = productRepository.getProductsByFreeShipping(list, freeShipping);
         }
         if(params.containsKey("prestige")){
-            int prestige = Integer.parseInt(params.get("prestige"));
+            String prestigeParam = params.get("prestige");
+            int prestige;
+            if(prestigeParam.equals("1") || prestigeParam.equals("2") || prestigeParam.equals("3") || prestigeParam.equals("4") || prestigeParam.equals("5"))
+                prestige = Integer.parseInt(prestigeParam);
+            else
+                throw new WrongParameterValueException("prestige", prestigeParam);
             list = productRepository.getProductsByPrestige(list, prestige);
         }
         return list;
     }
 
     @Override
-    public List<ArticleDTO> sortList(List<ArticleDTO> list, int order) throws WrongOrderException {
+    public List<ArticleDTO> sortList(List<ArticleDTO> list, int order) throws WrongParameterValueException {
 
         switch (order){
             case 0: list.sort(Comparator.comparing(ArticleDTO::getName));
@@ -103,7 +118,7 @@ public class MarketServiceImpl implements MarketService{
             break;
             case 3: list.sort(Comparator.comparing(ArticleDTO::getPrice));
             break;
-            default: throw new WrongOrderException("Order param " + String.valueOf(order) + " is not valid");
+            default: throw new WrongParameterValueException("order", String.valueOf(order));
         }
         return list;
     }
@@ -155,7 +170,7 @@ public class MarketServiceImpl implements MarketService{
 
     @Override
     public CartDTO getCart() throws EmptyCartException {
-        if(cart.isEmpty())
+        if(cart.emptyCart())
             throw new EmptyCartException();
         return cart;
     }

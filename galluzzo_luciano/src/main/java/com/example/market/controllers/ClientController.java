@@ -16,17 +16,20 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/v2")
+@RequestMapping("/apiClients/v1")
 public class ClientController {
 
     @Autowired
     private ClientService clientService;
 
+    // El siguiente endpoint obtiene todos los clientes registrados en el archivo utilizado como base de datos
     @GetMapping("/clients")
     public ResponseEntity<List<ClientDTO>> getClients(@RequestParam(value = "province", defaultValue = "") String province) throws IOException {
         return new ResponseEntity<>(clientService.getClients(province), HttpStatus.OK);
     }
 
+    // El siguiente endpoint recibe un objeto de tipo ClientDTO y lo agrega a la base de datos. Si falta algun dato
+    // o el cliente ya existe arroja la correspondiente excepcion
     @PostMapping("/create-client")
     public ResponseEntity<String> createClient(@RequestBody ClientDTO clientDTO) throws MissingFieldsClientException, IOException, ExistedClientException {
         clientService.createClient(clientDTO);
