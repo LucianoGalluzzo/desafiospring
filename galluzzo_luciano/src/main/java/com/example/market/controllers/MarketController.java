@@ -33,6 +33,11 @@ public class MarketController {
         return new ResponseEntity<>(marketService.purchaseRequest(payload), HttpStatus.OK);
     }
 
+    @GetMapping("/cart")
+    public ResponseEntity<CartDTO> getCart() throws EmptyCartException {
+        return new ResponseEntity<>(marketService.getCart(), HttpStatus.OK);
+    }
+
     @ExceptionHandler(value={IllegalAmountArgumentException.class})
     public ResponseEntity<ErrorDTO> illegalAmountArgumentException(Exception e){
         ErrorDTO errorDTO = new ErrorDTO("Invalid Parameters", e.getMessage());
@@ -72,6 +77,12 @@ public class MarketController {
     @ExceptionHandler(value={WrongParameterException.class})
     public ResponseEntity<ErrorDTO> wrongParameterException(Exception e){
         ErrorDTO errorDTO = new ErrorDTO("Wrong parameter", e.getMessage());
+        return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value={EmptyCartException.class})
+    public ResponseEntity<ErrorDTO> emptyCartException(Exception e){
+        ErrorDTO errorDTO = new ErrorDTO("Empty Cart", e.getMessage());
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 }

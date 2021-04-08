@@ -1,5 +1,5 @@
 Producto,Categoría,Marca,Precio,Cantidad,Envío Gratis,Prestigio
-Desmalezadora,Herramientas,Makita,$9600,5,SI,****
+Desmalezadora,Herramientas,Makita,$9600,3,SI,****
 Taladro,Herramientas,Black & Decker,$12500,7,SI,****
 Soldadora,Herramientas,Black & Decker,$7215,10,SI,***
 Zapatillas Deportivas,Deportes,Adidas,$13650,6,SI,*****
@@ -7,7 +7,7 @@ Zapatillas Deportivas,Deportes,Nike,$14000,4,SI,*****
 Camiseta,Deportes,Topper,$2300,2,NO,***
 Redmi Note 9,Celulares,Xiaomi,$40000,15,SI,****
 Smartwatch,Celulares,Noga,$1900,20,NO,**
-Remera,Indumentaria,Taverniti,$2300,2,NO,***
+Remera,Indumentaria,Taverniti,$2300,0,NO,***
 Chomba,Indumentaria,Taverniti,$2400,6,NO,***
 Medias,Indumentaria,Mistral,$500,8,NO,*
 Short,Indumentaria,Lacoste,$3900,9,SI,***

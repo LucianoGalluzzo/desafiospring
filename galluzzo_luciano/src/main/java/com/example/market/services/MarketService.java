@@ -1,9 +1,7 @@
 package com.example.market.services;
 
 import com.example.market.config.*;
-import com.example.market.dtos.ArticleDTO;
-import com.example.market.dtos.PayloadDTO;
-import com.example.market.dtos.ResponseDTO;
+import com.example.market.dtos.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,4 +16,6 @@ public interface MarketService {
     void updateDataBase(List<ArticleDTO> listArticles) throws IOException;
     ResponseDTO purchaseRequest(PayloadDTO payload) throws IOException, InsufficientStockException, NotFoundArticleException;
     void validateParams(Map<String, String> params) throws WrongParameterException;
+    void addToCart(TicketDTO ticket);
+    CartDTO getCart() throws EmptyCartException;
 }

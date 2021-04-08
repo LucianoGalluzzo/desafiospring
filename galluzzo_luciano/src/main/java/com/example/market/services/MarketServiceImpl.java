@@ -17,6 +17,7 @@ public class MarketServiceImpl implements MarketService{
     @Autowired
     private ProductRepository productRepository;
 
+    private CartDTO cart = new CartDTO();
     private AtomicLong idTicket = new AtomicLong(1);
     private List<String> validParams = new ArrayList<String>(Arrays.asList(
             "category", "productId", "name", "brand", "price", "quantity", "freeShipping", "prestige"));
@@ -126,13 +127,14 @@ public class MarketServiceImpl implements MarketService{
                 total += a.getQuantity() * aux.getPrice();
                 listArticleResponse.add(new ArticleResponseDTO(a));
             }else
-                throw new NotFoundArticleException(a.getProductId(), a.getName());
+                throw new NotFoundArticleException(a.getProductId(), a.getName(), a.getBrand());
         }
 
         updateDataBase(payload.getArticles());
 
         TicketDTO ticket = new TicketDTO(idTicket.getAndIncrement(), listArticleResponse, total);
         StatusDTO status = new StatusDTO(200, "La solicitud de compra se completó con éxito");
+        addToCart(ticket);
         return new ResponseDTO(ticket, status);
     }
 
@@ -143,5 +145,18 @@ public class MarketServiceImpl implements MarketService{
                 throw new WrongParameterException(entry.getKey());
             }
         }
+    }
+
+    @Override
+    public void addToCart(TicketDTO ticket) {
+        cart.addTicket(ticket);
+        cart.setTotalAccumulated(ticket.getTotal() + cart.getTotalAccumulated());
+    }
+
+    @Override
+    public CartDTO getCart() throws EmptyCartException {
+        if(cart.isEmpty())
+            throw new EmptyCartException();
+        return cart;
     }
 }
