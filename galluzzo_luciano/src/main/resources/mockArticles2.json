@@ -1,0 +1,82 @@
+[
+  {
+    "productId": 9,
+    "name": "Remera",
+    "brand": "Taverniti",
+    "quantity": 2,
+    "category": "Indumentaria",
+    "price": 2300,
+    "freeShipping": false,
+    "prestige": "***"
+  },
+  {
+    "productId": 10,
+    "name": "Chomba",
+    "brand": "Taverniti",
+    "quantity": 6,
+    "category": "Indumentaria",
+    "price": 2400,
+    "freeShipping": true,
+    "prestige": "***"
+  },
+  {
+    "productId": 11,
+    "name": "Llave",
+    "brand": "Ferrum",
+    "quantity": 8,
+    "category": "Herramientas",
+    "price": 500,
+    "freeShipping": false,
+    "prestige": "*"
+  },
+  {
+    "productId": 12,
+    "name": "Tornillo",
+    "brand": "Ferrum",
+    "quantity": 9,
+    "category": "Herramientas",
+    "price": 3900,
+    "freeShipping": true,
+    "prestige": "***"
+  },
+  {
+    "productId": 13,
+    "name": "Remera",
+    "brand": "Taverniti",
+    "quantity": 2,
+    "category": "Indumentaria",
+    "price": 2300,
+    "freeShipping": false,
+    "prestige": "***"
+  },
+  {
+    "productId": 14,
+    "name": "Chomba",
+    "brand": "Taverniti",
+    "quantity": 6,
+    "category": "Indumentaria",
+    "price": 2400,
+    "freeShipping": true,
+    "prestige": "***"
+  },
+  {
+    "productId": 15,
+    "name": "Llave",
+    "brand": "Ferrum",
+    "quantity": 8,
+    "category": "Indumentaria",
+    "price": 500,
+    "freeShipping": false,
+    "prestige": "*"
+  },
+  {
+    "productId": 16,
+    "name": "Tornillo",
+    "brand": "Ferrum",
+    "quantity": 9,
+    "category": "Herramientas",
+    "price": 3900,
+    "freeShipping": true,
+    "prestige": "***"
+  }
+]
