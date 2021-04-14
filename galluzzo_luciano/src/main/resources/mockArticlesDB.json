@@ -1,0 +1,12 @@
+[
+  {
+    "productId": 1,
+    "name": "Desmalezadora",
+    "brand": "Makita",
+    "quantity": 5,
+    "category": "Herramientas",
+    "price": 9600,
+    "freeShipping": true,
+    "prestige": "****"
+  }
+]

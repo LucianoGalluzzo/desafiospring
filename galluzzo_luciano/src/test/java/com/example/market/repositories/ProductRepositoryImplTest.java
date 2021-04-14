@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
@@ -34,7 +32,7 @@ public class ProductRepositoryImplTest {
     @Mock
     ProductRepositoryImpl mockProductRepository;
 
-    private static List<ArticleDTO> articles, articles2;
+    private static List<ArticleDTO> articles, articles2, articlesDB;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeAll
@@ -49,6 +47,11 @@ public class ProductRepositoryImplTest {
                 objectMapper.readValue(new File("src/main/resources/mockArticles2.json"),
                         new TypeReference<>() {
                         });
+
+        articlesDB =
+                objectMapper.readValue(new File("src/main/resources/mockArticlesDB.json"),
+                        new TypeReference<>() {
+                        });
     }
 
     @BeforeEach
@@ -56,16 +59,16 @@ public class ProductRepositoryImplTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
+    /*@Test
     void getProductsTest() throws IOException, EmptyDataBaseException {
 
-        when(mockProductRepository.getAllProducts()).thenReturn(articles);
+        //when(mockProductRepository.getAllProducts()).thenReturn(articles);
 
         List<ArticleDTO> responseArticles = productRepository.getAllProducts();
 
-        Assertions.assertEquals(articles, responseArticles);
+        Assertions.assertEquals(articlesDB, responseArticles);
 
-    }
+    }*/
 
     @Test
     void getProductsFilterByCategoryTest() throws IOException, EmptyDataBaseException {
@@ -79,6 +82,22 @@ public class ProductRepositoryImplTest {
         List<ArticleDTO> responseArticles = productRepository.getProductsByCategory(articles, "Herramientas");
 
         Assertions.assertEquals(articlesTest, responseArticles);
+    }
+
+    @Test
+    void getProductsFilterByCategoryAndShippingTest() throws IOException, EmptyDataBaseException {
+        List<ArticleDTO> articlesTest = new ArrayList<>(articles2);
+        when(mockProductRepository.getAllProducts()).thenReturn(articles2);
+
+        articlesTest = articlesTest.stream().filter(articleDTO -> articleDTO.getCategory().equals("Herramientas") &&
+                articleDTO.isFreeShipping())
+                .collect(Collectors.toList());
+
+        List<ArticleDTO> responseArticles = productRepository.getProductsByCategory(articles2, "Herramientas");
+        responseArticles = productRepository.getProductsByFreeShipping(responseArticles, true);
+
+        Assertions.assertEquals(articlesTest, responseArticles);
+
     }
 
 }
