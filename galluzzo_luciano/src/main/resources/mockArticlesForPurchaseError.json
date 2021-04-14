@@ -1,0 +1,14 @@
+[
+  {
+    "productId": 92,
+    "name": "Cinturon",
+    "brand": "Taverniti",
+    "quantity": 1
+  },
+  {
+    "productId": 100,
+    "name": "Zapatillas",
+    "brand": "Taverniti",
+    "quantity": 2
+  }
+]

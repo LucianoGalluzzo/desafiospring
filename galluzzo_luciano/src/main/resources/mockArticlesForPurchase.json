@@ -1,0 +1,14 @@
+[
+  {
+    "productId": 9,
+    "name": "Remera",
+    "brand": "Taverniti",
+    "quantity": 1
+  },
+  {
+    "productId": 10,
+    "name": "Chomba",
+    "brand": "Taverniti",
+    "quantity": 2
+  }
+]

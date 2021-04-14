@@ -1,20 +1,19 @@
 package com.example.market.controllers;
 
-import com.example.market.config.EmptyDataBaseException;
-import com.example.market.config.IllegalAmountArgumentException;
-import com.example.market.config.WrongParameterException;
-import com.example.market.config.WrongParameterValueException;
-import com.example.market.dtos.ArticleDTO;
+import com.example.market.config.*;
+import com.example.market.dtos.*;
 import com.example.market.services.MarketService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -26,6 +25,7 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -38,7 +38,7 @@ public class MarketControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private static List<ArticleDTO> articles, articles2;
+    private static List<ArticleDTO> articles, articles2, articlesForPurchase;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeAll
@@ -53,6 +53,12 @@ public class MarketControllerTest {
                 objectMapper.readValue(new File("src/main/resources/mockArticles2.json"),
                         new TypeReference<>() {
                         });
+
+        articlesForPurchase =
+                objectMapper.readValue(new File("src/main/resources/mockArticlesForPurchase.json"),
+                        new TypeReference<>() {
+                        });
+
     }
 
     @Test
@@ -186,4 +192,33 @@ public class MarketControllerTest {
         Assertions.assertEquals(articlesTest, responseArticles);
     }
 
+    /*@Test
+    void purchaseRequestOKTest() throws Exception {
+        ResponseDTO responseTest = purchaseRequestFixture();
+        PayloadDTO payloadTest = payloadFixture();
+        when(marketService.purchaseRequest(any())).thenReturn(responseTest);
+
+        MvcResult mvcResult = mockMvc.perform(post("/api/v1/purchase-request")
+                .contentType(MediaType.APPLICATION_JSON).content(payloadTest))
+                .andExpect(status().isOk()).andReturn();
+
+        ResponseDTO actualResponse = objectMapper.readValue(mvcResult.getResponse().getContentAsByteArray(),
+                new TypeReference<>() {});
+
+        Assertions.assertEquals(responseTest, actualResponse);
+    }*/
+
+    private PayloadDTO payloadFixture() {
+        return new PayloadDTO(articlesForPurchase);
+    }
+
+    ResponseDTO purchaseRequestFixture(){
+        List<ArticleResponseDTO> articlesResponseForPurchase = new ArrayList<>();
+        for (int i = 0; i < articlesForPurchase.size(); i++) {
+            articlesResponseForPurchase.add(new ArticleResponseDTO(articlesForPurchase.get(i)));
+        }
+        TicketDTO ticketFixture = new TicketDTO(1L, articlesResponseForPurchase, 7100);
+        StatusDTO statusFixture = new StatusDTO(200, "La solicitud de compra se completó con éxito");
+        return new ResponseDTO(ticketFixture, statusFixture);
+    }
 }

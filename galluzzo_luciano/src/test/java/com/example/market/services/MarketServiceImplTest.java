@@ -1,11 +1,8 @@
 package com.example.market.services;
 
 
-import com.example.market.config.EmptyDataBaseException;
-import com.example.market.config.IllegalAmountArgumentException;
-import com.example.market.config.WrongParameterException;
-import com.example.market.config.WrongParameterValueException;
-import com.example.market.dtos.ArticleDTO;
+import com.example.market.config.*;
+import com.example.market.dtos.*;
 import com.example.market.repositories.ProductRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,8 +10,6 @@ import org.junit.jupiter.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +28,7 @@ public class MarketServiceImplTest {
     @Mock
     private ProductRepository productRepository;
 
-    private static List<ArticleDTO> articles, articles2;
+    private static List<ArticleDTO> articles, articles2, articlesForPurchase, articlesForPurchaseError;
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeAll
@@ -46,6 +41,16 @@ public class MarketServiceImplTest {
 
         articles2 =
                 objectMapper.readValue(new File("src/main/resources/mockArticles2.json"),
+                        new TypeReference<>() {
+                        });
+
+        articlesForPurchase =
+                objectMapper.readValue(new File("src/main/resources/mockArticlesForPurchase.json"),
+                        new TypeReference<>() {
+                        });
+
+        articlesForPurchaseError =
+                objectMapper.readValue(new File("src/main/resources/mockArticlesForPurchaseError.json"),
                         new TypeReference<>() {
                         });
     }
@@ -161,5 +166,50 @@ public class MarketServiceImplTest {
         List<ArticleDTO> responseArticles = marketService.getProducts(params);
 
         Assertions.assertEquals(articlesTest, responseArticles);
+    }
+
+    @Test
+    void purchaseRequestOKTest() throws Exception {
+        ResponseDTO responseTest = purchaseRequestFixture();
+        PayloadDTO payloadTest = payloadFixture();
+        when(productRepository.getAllProducts()).thenReturn(articles);
+
+        ResponseDTO actualResponse = marketService.purchaseRequest(payloadTest);
+
+        Assertions.assertEquals(responseTest, actualResponse);
+    }
+
+    @Test
+    void purchaseRequestArticleNotFoundTest() throws Exception {
+
+        PayloadDTO payloadTest = payloadFixtureForError();
+
+        when(productRepository.getAllProducts()).thenReturn(articles);
+
+        Exception exception = Assertions.assertThrows(NotFoundArticleException.class, () -> {
+            marketService.purchaseRequest(payloadTest);
+        });
+
+        String expectedMessage = "Article with id '92', name 'Cinturon', and brand 'Taverniti' not found in database";
+        String actualMessage = exception.getMessage();
+        Assertions.assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    private PayloadDTO payloadFixture() {
+        return new PayloadDTO(articlesForPurchase);
+    }
+
+    private PayloadDTO payloadFixtureForError() {
+        return new PayloadDTO(articlesForPurchaseError);
+    }
+
+    ResponseDTO purchaseRequestFixture(){
+        List<ArticleResponseDTO> articlesResponseForPurchase = new ArrayList<>();
+        for (int i = 0; i < articlesForPurchase.size(); i++) {
+            articlesResponseForPurchase.add(new ArticleResponseDTO(articlesForPurchase.get(i)));
+        }
+        TicketDTO ticketFixture = new TicketDTO(1L, articlesResponseForPurchase, 7100);
+        StatusDTO statusFixture = new StatusDTO(200, "La solicitud de compra se completó con éxito");
+        return new ResponseDTO(ticketFixture, statusFixture);
     }
 }
